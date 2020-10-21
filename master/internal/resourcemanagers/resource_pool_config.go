@@ -16,15 +16,18 @@ func DefaultRPsConfig() *ResourcePoolsConfig {
 
 // ResourcePoolConfig hosts the configuration for a resource pool
 type ResourcePoolConfig struct {
-	PoolName    string              `json:"pool_name"`
-	Description string              `json:"description"`
-	Provider    *provisioner.Config `json:"provider"`
+	PoolName                      string              `json:"pool_name"`
+	Description                   string              `json:"description"`
+	MaxZeroSlotContainersPerAgent *int                `json:"max_zero_slot_containers_per_agent"`
+	Provider                      *provisioner.Config `json:"provider"`
 }
 
 // Validate implements the check.Validatable interface.
 func (r ResourcePoolConfig) Validate() []error {
 	return []error{
 		check.True(len(r.PoolName) != 0, "resource pool name cannot be empty"),
+		check.True(r.MaxZeroSlotContainersPerAgent == nil || *r.MaxZeroSlotContainersPerAgent >= 0,
+			"resource pool max containers per agent should be nil or >= 0"),
 	}
 }
 
