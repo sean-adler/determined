@@ -374,14 +374,20 @@ func (c *awsCluster) launchInstances(instanceNum int, dryRun bool) (*ec2.Reserva
 						Key:   aws.String("determined-resource-pool"),
 						Value: aws.String(c.resourcePool),
 					},
-					{
-						Key:   aws.String("determined-master-address"),
-						Value: aws.String(c.masterURL.String()),
-					},
 				},
 			},
 		},
 		UserData: aws.String(base64.StdEncoding.EncodeToString(c.ec2UserData)),
+	}
+
+	if c.CustomTags != nil {
+		for _, tag := range c.CustomTags {
+			customTag := &ec2.Tag{
+				Key: aws.String(tag.Key),
+				Value: aws.String(tag.Value),
+			}
+			input.TagSpecifications[0].Tags = append(input.TagSpecifications[0].Tags, customTag)
+		}
 	}
 
 	input.NetworkInterfaces = []*ec2.InstanceNetworkInterfaceSpecification{
