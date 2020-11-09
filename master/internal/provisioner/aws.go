@@ -375,6 +375,10 @@ func (c *awsCluster) launchInstances(instanceNum int, dryRun bool) (*ec2.Reserva
 						Key:   aws.String("determined-resource-pool"),
 						Value: aws.String(c.resourcePool),
 					},
+					{
+						Key:   aws.String("determined-master-address"),
+						Value: aws.String(c.masterURL.String()),
+					},
 				},
 			},
 		},
